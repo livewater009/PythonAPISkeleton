@@ -1,12 +1,8 @@
 # api.py
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-from typing import Any, Dict
-from palm_detect import PalmDetector  # assuming your class is named like this
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
-detector = PalmDetector()  # or however you instantiate it
 
 app.add_middleware(
   CORSMiddleware,
@@ -16,13 +12,9 @@ app.add_middleware(
   allow_headers=["*"],
 )
 
-class ImageRequest(BaseModel):
-  image: str
-
-@app.post("/api/detect-palm")
-def analyze_palm(data: ImageRequest) -> Dict[str, Any]:
+@app.get("/api/health")
+def health():
   try:
-    result = detector.detect_palm_features(data.image)
-    return result
+    return "Hi, the API is running!"
   except Exception as e:
     raise HTTPException(status_code=500, detail=str(e))
